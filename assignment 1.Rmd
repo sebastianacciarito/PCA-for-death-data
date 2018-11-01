@@ -1,0 +1,270 @@
+---
+title: "Assignment 1"
+author: "Sebastian Acciarito"
+date: "15/08/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(cowplot)
+library(gridExtra)
+library(knitr)
+library(ggfortify)
+library(ggrepel)
+setwd("~/Documents/UNI/uni 2018 semester 2/High dim data analysis/A1")
+death1=read.csv('death.csv')
+death2=death1[,2:10]*100
+death3=cbind(death1[,1],death2)
+headers=c('Cause','1-5','6-15','16-25','26-35','36-45','46-55','56-65','66-75','76-85')
+headersp=c('Cause','1-5(%)','6-15(%)','16-25(%)','26-35(%)','36-45(%)','46-55(%)','56-65(%)','66-75','76-85(%)')
+names(death1)=headers
+names(death3)=headersp
+```
+
+## Part 1
+
+**Data Description**
+
+The dataset for this assignment contains observations on the causes of death across 9 demographics. Demographics are segmented by age and and include:
+
+* 1-5 years old
+* 6-15 years old
+* 16-25 years old
+* 26-35 years old
+* 36-45 years old
+* 46-55 years old
+* 56-65 years old
+* 66-75 years old 
+* 76-85 years old
+
+All observations are measured in probabilities. The causes of death for this data set include:
+
+* Accident
+* Cancer
+* Diabetes
+* Heart related
+* Influenza
+* Mental
+* Nephritis
+* Stroke
+* Suicide
+* Other
+
+**Preliminary analysis**
+
+Prior to examing the data through Principal Components analysis, it is important to examine the data by age demographic. By representing the data as a pie graph, we are able to easily understand the most likely cause of death for each demographic.
+```{r}
+ggplot(death1)+
+  geom_bar(aes(death1$`1-5`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="1-5 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.1: Pie chart of 1-5 year old_
+
+```{r}
+kable(death3[,c(1,2)],caption="1-5 age demographic(%)")
+```
+
+Within the 1-5 year old demographic we find that individuals are most likely to die by accident, with a 43.8% probability of death.
+```{r}
+ggplot(death1)+
+  geom_bar(aes(death1$`6-15`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="6-15 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.2: Pie chart of 6-15 year old_
+
+```{r}
+kable(death3[,c(1,3)],caption="6-15 age demographic")
+```
+
+
+The data suggests that the 6-15 year old demographic are also most likely die by accident, with a 35.45% probability of death.
+```{r}
+ggplot(death1)+
+  geom_bar(aes(death1$`16-25`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="16-25 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.3: Pie chart of 16-25 year old_
+
+```{r}
+kable(death3[,c(1,4)],caption="16-25 age demographic")
+```
+
+Within the 16-25 year old demographic we find that individuals are most likely to die by accident, with a 59.7% probability of accident.
+
+```{r}
+ggplot(death1)+
+  geom_bar(aes(death1$`26-35`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="26-35 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.4: Pie chart of 26-35 year old_
+
+```{r}
+kable(death3[,c(1,5)],caption="26-35 age demographic")
+```
+
+Individuals within the 26-35 year old demographic are most likely to die of accident, with a 51.7% probability of death.
+
+```{r}
+ggplot(death1)+
+  geom_bar(aes(death1$`36-45`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="36-45 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.5: Pie chart of 36-45 year old_
+
+```{r}
+kable(death3[,c(1,6)],caption="35-46 age demographic")
+```
+
+Within the 36-45 year old demographic we find that individuals are most likely to die of accident, with a 31.5% probability of death.
+
+```{r}
+ggplot(death1)+  
+geom_bar(aes(death1$`46-55`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="46-55 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.6: Pie chart of 46-55 year old_
+
+```{r}
+kable(death3[,c(1,7)],caption="46-55 age demographic")
+```
+
+Data suggests that the 46-55 year old demographic we find that individuals are most likely to die of Heart Diease, with a 24.3% probability of death.
+
+```{r}
+ggplot(death1)+  
+geom_bar(aes(death1$`56-65`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="56-65 age demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.7: Pie chart of 56-65 year old_
+
+```{r}
+kable(death3[,c(1,8)],caption="56-65 age demographic")
+```
+
+Conversly, within the 56-65 year old demographic we find that individuals are most likely to die of Cancer, with a 29.7% probability of death.
+
+```{r}
+ggplot(death1)+  
+geom_bar(aes(death1$`66-75`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="66-75 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.8: Pie chart of 66-75 year old_
+
+```{r}
+ kable(death3[,c(1,9)],caption="66-75 age demographic")
+```
+
+The data suggests 66-75 year old demographic we find that individuals are most likely to die of Cancer, with a 32% probability of death.
+
+```{r}
+ggplot(death1)+  
+geom_bar(aes(death1$`76-85`,fill=death1$Cause))+
+  coord_polar()+
+  labs(x=" ",y=" ",subtitle="76-85 Age Demographic")+
+  guides(fill=guide_legend(title="Causes"))
+```
+
+_Figure 1.9: Pie chart of 76-85 year old_
+
+```{r}
+kable(death3[,c(1,10)],caption="76-85 year old demographic")
+```
+
+Conversly, within the 76-85 year old demographic we find that individuals are most likely to die of heart diease, with a 27.5% probability.
+
+From initial analysis, aside from determining which cause of death is most probable for each demographic, the data suggests that the from ages 1-45, individuals are more likely to die on accident than any other cause of death. Yet, from ages 46-85, we see that individuals are either likely to die from heart diease (46-55 and 76-85 year old demographics) or Cancer (between the ages of 56- 75).
+
+Using Principal Components analysis we are able to determine 9 linear combinations that help to explain the overall varation in our dataset. As all observations in the dataset represent the probabilities of death by cause, there is no need to standardize the data. The output of the Principal Components Analysis is seen below.
+```{r}
+death1%>%
+  select_if(is.numeric)%>%
+  prcomp(scale. = FALSE)->pcaout #Do pca 
+spca=summary(pcaout)# figure out how to put this in a nice table
+print(spca)
+```
+By using the first two Principal Components which explain 95% of the total variation in the data, we are able to produce the biplot below:
+```{r}
+autoplot(pcaout,loadings=TRUE,loadings.label=TRUE,
+         loadings.label.repel=T)+geom_label_repel(aes(label=death1$Cause),label.padding=0.1)+(aes(title="Principal Component Analysis"))
+
+```
+
+_Figure 2: A biplot of Principle Component 1 and 2_
+
+The biplot of Principal Component One and Two suggests that specific demographics are quite similar to each other. For example, we see that the vectors for __1-5 years old__ and __6-15 years old__ are correlated together, with almost no angle between the vectors. Further the vectors for the __16-25 year old__ and __26-35 year old__ demographics are correlated together in terms of angle between vectors. Conversly, the __56-65 year old__, __66-75 year old__ and __76-85 year old__ deomgraphics appear to be correlated due to the small angle. This could infer that the __16-25 year old__ an __26-35 year old__ demographics are correlated, whilst the __56-65 year old__, __66-75 year old__ and __76-85 year old__ deomgraphics are correlated, insofar as they may die from similar causes of death. Interestingly, the biplot also illustrates that there appears to be a large angle between the __16-25__ demographic age and the old age group (76-85), suggesting that the two demographics may suffer from significantly different causes of death. This is considered interesting as one would have thought that the angle between the __76-85 year old__ and the __1-5 years old__ would be larger given the significant age difference. 
+
+The biplot illustrates that __Other__ appears to be situated in the angle between the __46-55 year old__ and the __56-65 year old__ demographic, suggesting that other dieases not listed in the dataset may be a common cause of death for these demographics. It's important to highlight that both __Cancer__ and __Heart__ points are close together, inferring that Cancer and Heart Diease may have similar probabilities of causing death. Moreover, their location near the __66-75__ and __76-85 year old__ demographic suggest that it may be a common cause of death for both demographics. On the other hand, the biplot suggests that the __1-5__ and __6-15__ don't appear to be correlated to any specific cause of death. However, this is intuitive as we would not expect young healthy children to die of the dieases listed. It would only be expected that they might die on accident, which does correlate to the data.  __Influenza__, __Nephritis__, __Stroke__, __Diabete__ all appear to be grouped closely together, inferring that they all  have a similar probability of causing death.We see that both __suicide__ and __mental__ appear to be on the edge of the grouping. The postion of all 6 causes of death are to the left of the biplot, suggesting that their probabily of causing death may be similar across all demographics, and dont appear to associated with a specific demographic.
+
+Accident appears to be an outlier on the biplot, suggesting that it is unrelated to the other causes of death. Whilst it is distant from the other causes of death, it appears to be in line with the __16-25__ year old vector. From this we could infer that, Accidents may be a more probable cause of death for __16-25__ year olds compared to any other demographic, which confirms the observations in the original dataset.
+```{r}
+plot(pcaout,type='lines')
+```
+
+_Figure 3: A Screeplot of all Principal Components. Used to determine how many principle components should be used_ 
+
+Lastly, by analysing the above Screeplot, we would choose to use only 3 Principal Components. This conclusion was derived from the fact that it is at point 3 on the x axis that the data appears to flatten out. In this instance, we are unable to use the Kaiser rule for Principal Component selection as the data has not been standardised.
+
+**Limitations of analysis**
+
+Although Principal Components Analysis is useful when summarising data into a single index, through summarizing we inevitably loose some important information. For example, by only using two Principal Components, we are able to explain approximately 95% of the variation in the data, but ultimately loose 5% of information if we chose not to include further Principal Components. Further, the biplot produced above indicates that the __46-55__ and __56-65__ year old demographic may die as a result of other dieases. We assume this inference due to the close distance between the other point and the __46-55__ vector. However, as the dataset doesn't provide information regarding which dieases are found in the "other" category, we are unable to gain further insight into causes of death for that demographic. 
+
+## Part 2
+
+**Question 1**
+
+The data did not need to be standardised in part 1, as the data was measured in probabilities.
+
+**Question 2**
+
+Approximately 3% (0.03821) of the total variation in the data was explained by the third Principal Component on its own.
+
+**Question 3**
+
+Approximately 95% (0.949) of the total variation in the data was explained by the first and second Principal Components.
+
+**Question 4**
+
+In terms of age profile, it appears that both Heart Diease and Cancer appears to be closely related to the __66-75__ and __76-85__ year old demographics. We concluded this from the fact that both cancer and heart points are in close proximity to the __66-75__ and __76-85__ year old vectors on the biplot.
+
+**Question 5**
+
+In terms of age profile, we see that accident and cancer appear to be quite different from each other. This is drawn from the fact that accident appears in line with the __16-25 year old__ vector, whilst cancer appears inline with the __66-75 year old__ vector. Both of these vectors are perpendicular on the biplot, and there apperas to be a large distance between the points.
+
+## Appendix 
+```{r}
+pcaout$rotation[,1:2]%>%kable(caption='Summary of weights on first two principal components')
+```
+
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+
+```
+
+
